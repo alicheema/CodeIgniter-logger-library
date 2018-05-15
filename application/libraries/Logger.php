@@ -18,7 +18,7 @@ class Logger {
     public function __construct() {
         $this->ci = & get_instance();
         $this->ci->load->config('logger', TRUE);
-        $this->_store_in = $this->ci->config->item('store_in', 'logger');        
+        $this->_store_in = $this->ci->config->item('store_in', 'logger');
         $this->_verify_settings();
     }
 
@@ -37,19 +37,17 @@ class Logger {
         if ($this->_set_transaction($transaction_details, $user_id)) {
             return TRUE;
         } else {
-            log_message('error','There is some issue in logger library...');
+            log_message('error', 'There is some issue in logger library...');
         }
         return FALSE;
     }
 
-    
     /**
      * @method get_log
      * @param $user_id, $date, $order_by, $limit
      * @return Transaction logs
      * Get log details by passing $user_id and $date
      */
-
     public function get_log($user_id = NULL, $date = NULL, $order_by = NULL, $limit = NULL) {
         return $this->_get_transaction($user_id, $date, $order_by, $limit);
     }
@@ -60,29 +58,26 @@ class Logger {
      * @return Boolean (TRUE/FALSE)
      * Save transaction logs
      * $transaction_details is an array which can contain any number of 
-     custom keys which you want to store
+      custom keys which you want to store
      * By Default it will set additional_info no need to pass additional_information
      */
     private function _set_transaction($transaction_details, $user_id) {
-        $transaction = array(
-            'transaction' => array(
-                'basic_info' => $transaction_details,
-                'additional_info' => array(
-                    'ip_address' => $this->get_client_ip_address(),
-                    'user_agent' => $this->get_user_agent(),
-                    'is_bot' => $this->is_bot(),
-                    'transaction_time' => Date('Y-m-d H:i:s')
-                )
-            )
+        $user_agent = $this->get_user_agent();
+        $additional_data = array(
+            'url' => base_url() . implode('/', $this->ci->uri->segment_array()),
+            'class_name' => $this->ci->router->fetch_class(),
+            'action' => $this->ci->router->fetch_method(),
+            'user_id' => $user_id,
+            'ip_address' => $this->get_client_ip_address(),
+            'user_agent_details' => $user_agent['userAgent'],
+            'user_agent_name' => $user_agent['name'],
+            'user_agent_version' => $user_agent['version'],
+            'platform' => $user_agent['platform'],
+            'is_bot' => ($this->is_bot()) ? 1 : 0
         );
+        $transaction = array_merge($transaction_details, $additional_data);
         if ($this->_store_in == 'database') {
-            $date_time = date('Y-m-d H:i:s');
-            $insert_data = array(
-                'user_id' => $user_id,
-                'created_at' => $date_time,
-                'transaction_details' => json_encode($transaction)
-            );
-            if ($this->ci->logger_model->set_transaction($insert_data)) {
+            if ($this->ci->logger_model->set_transaction($transaction)) {
                 return TRUE;
             }
         }
@@ -102,11 +97,11 @@ class Logger {
                 $where['user_id'] = $user_id;
 
             if (isset($date)) {
-                $where['created_at >='] = $date;
-                $where['created_at <='] = $date;
-            }
+                $where['transaction_time >='] = $date . ' 00:00:00';
+                $where['transaction_time <='] = $date . ' 23:59:59';
+            }            
             if (!isset($order_by))
-                $order_by = 'created_at DESC';
+                $order_by = 'transaction_time DESC';
             return $this->ci->logger_model->get_transaction($where, $order_by, $limit);
         }
     }
@@ -120,8 +115,8 @@ class Logger {
     private function _verify_settings() {
         if ($this->_store_in == 'database') {
             $this->ci->load->model('logger/logger_model');
-        }else{
-            log_message('error','please set store_in in logger configuration file');
+        } else {
+            log_message('error', 'please set store_in in logger configuration file');
         }
     }
 

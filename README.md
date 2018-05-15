@@ -9,7 +9,7 @@ These instructions will get you a copy of the package at your machine and do req
 
 ### Installing
 
-Download the package from GIT 
+Download the package from GIT user git clone https://github.com/alicheema/CodeIgniter-logger-library.git Or Go to https://github.com/alicheema/CodeIgniter-logger-library and directory download to your machine
 
 You will find following files and folders
 application
@@ -61,6 +61,18 @@ $config['store_in'] = 'database';
 $config['session_user_id'] = 'userID'; // You can tell the library to take the user id from a session variable
 $config['table_name'] = ''; // If you prefer to name the table other than "transaction_logs" you can set it here...
 
+If you don't want to use hooks and want to call library in each or required controller and functions you are free to do so in that case don't enable hooks and you can call library in a function like
+
+//Load Library 
+$this->load->library('logger');
+
+//Call function to save logs
+$transaction_details = array(
+        'transaction_data' => 'You transaction data in json format',
+        'user_details' => your user detail in json format,
+        'custom_message' => 'your custom message',
+    );
+$this->logger->log_transaction($transaction_details);
 
 ## Versioning
 

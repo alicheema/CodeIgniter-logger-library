@@ -1,5 +1,7 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 /**
  * @package Logger_model
  * @author Ali Cheema <ali.nawaz@pitb.gov.pk>
@@ -18,13 +20,14 @@ class Logger_model extends CI_Model {
             $this->_logger_table = 'transaction_logs';
         $this->_verify_table();
     }
+
     /**
      * @method _verify_table     
      * Check if specified table exists in database
      */
     private function _verify_table() {
         if (!$this->db->table_exists($this->_logger_table)) {
-            log_message('error','Specified table "' . $this->_logger_table . '" does not exists');
+            log_message('error', 'Specified table "' . $this->_logger_table . '" does not exists');
         }
     }
 
@@ -37,7 +40,7 @@ class Logger_model extends CI_Model {
         if ($this->db->insert($this->_logger_table, $insert_data)) {
             return TRUE;
         } else {
-            log_message('error','unable to save logs');
+            log_message('error', 'unable to save logs');
         }
         return FALSE;
     }
@@ -47,7 +50,7 @@ class Logger_model extends CI_Model {
      * @param $where, $order_by, $limit
      * Get transaction details
      */
-    public function get_messages($where = NULL, $order_by = NULL, $limit = NULL) {
+    public function get_transaction($where = NULL, $order_by = NULL, $limit = NULL) {
         if (isset($where) && !empty($where))
             $this->db->where($where);
         if (isset($order_by))
@@ -59,11 +62,7 @@ class Logger_model extends CI_Model {
                 $this->db->limit($limit);
             }
         }
-        $query = $this->db->get($this->_logger_table);
-        if ($query->num_rows() > 0) {
-            return $query->result();
-        }
-        return FALSE;
+        return $this->db->get($this->_logger_table)->result();
     }
 
 }

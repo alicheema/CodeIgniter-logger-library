@@ -17,8 +17,18 @@ DROP TABLE IF EXISTS `transaction_logs`;
 CREATE TABLE `transaction_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
-  `transaction_details` text,
-  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `url` varchar(250) DEFAULT NULL,
+  `class_name` varchar(250) NOT NULL,
+  `action` varchar(250) NOT NULL,
+  `transaction_data` text NOT NULL,
+  `user_details` text NOT NULL,
+  `ip_address` varchar(250) NOT NULL,
+  `user_agent_details` varchar(500) NOT NULL,
+  `user_agent_name` varchar(250) NOT NULL,
+  `user_agent_version` varchar(250) NOT NULL,
+  `platform` varchar(250) NOT NULL,
+  `is_bot` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1=Yes, 0=No',
+  `transaction_time` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
