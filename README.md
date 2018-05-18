@@ -49,6 +49,7 @@ DROP TABLE IF EXISTS `transaction_logs`;
 CREATE TABLE `transaction_logs` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
+  `custom_message` varchar(500) NOT NULL,
   `url` varchar(250) DEFAULT NULL,
   `class_name` varchar(250) NOT NULL,
   `action` varchar(250) NOT NULL,
