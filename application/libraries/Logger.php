@@ -112,8 +112,7 @@ class Logger {
 
             if (isset($date)) {
                 $input_date = str_replace('/', '-', $date);
-                $formated_date = dbDateFormat($input_date);
-                echo $formated_date . '<hr>';
+                $formated_date = dbDateFormat($input_date);               
                 $where['transaction_time >='] = $formated_date . ' 00:00:00';
                 $where['transaction_time <='] = $formated_date . ' 23:59:59';
             }
