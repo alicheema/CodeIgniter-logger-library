@@ -126,7 +126,7 @@ class Logger {
     /**
      * @method _verify_settings
      * @param 
-     * Check library configuations and load logger model
+     * Check library configurations and load logger model
      *
      */
     private function _verify_settings() {
