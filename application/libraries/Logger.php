@@ -8,8 +8,10 @@ if (!defined('BASEPATH'))
  * @author Ali Cheema <ali.nawaz@pitb.gov.pk>
  * @version V1.0
  * This library allows you to save transaction logs of user
- * It also faciliates to save custom keys related to transaction as per your requirements
+ * It also facilitates to save custom keys related to transaction as per your requirements
  */
+require_once 'Mobile_Detect.php';
+
 class Logger {
 
     private $_store_in;
@@ -62,7 +64,18 @@ class Logger {
      * By Default it will set additional_info no need to pass additional_information
      */
     private function _set_transaction($transaction_details, $user_id) {
-        $user_agent = $this->get_user_agent();
+        $detect = new Mobile_Detect();
+        if ($detect->isMobile()) {
+            $accessing_medium = 'mobile';
+            $user_agent = $this->get_user_agent($detect->getUserAgent());
+        } else if ($detect->isTablet()) {
+            $accessing_medium = 'tablet';
+            $user_agent = $this->get_user_agent($detect->getUserAgent());
+        } else {
+            $accessing_medium = 'desktop';
+            $user_agent = $this->get_user_agent($_SERVER['HTTP_USER_AGENT']);
+        }
+
         $additional_data = array(
             'url' => base_url() . implode('/', $this->ci->uri->segment_array()),
             'class_name' => $this->ci->router->fetch_class(),
@@ -73,6 +86,7 @@ class Logger {
             'user_agent_name' => $user_agent['name'],
             'user_agent_version' => $user_agent['version'],
             'platform' => $user_agent['platform'],
+            'accessing_medium' => $accessing_medium,
             'is_bot' => ($this->is_bot()) ? 1 : 0
         );
         $transaction = array_merge($transaction_details, $additional_data);
@@ -97,9 +111,12 @@ class Logger {
                 $where['user_id'] = $user_id;
 
             if (isset($date)) {
-                $where['transaction_time >='] = $date . ' 00:00:00';
-                $where['transaction_time <='] = $date . ' 23:59:59';
-            }            
+                $input_date = str_replace('/', '-', $date);
+                $formated_date = dbDateFormat($input_date);
+                echo $formated_date . '<hr>';
+                $where['transaction_time >='] = $formated_date . ' 00:00:00';
+                $where['transaction_time <='] = $formated_date . ' 23:59:59';
+            }
             if (!isset($order_by))
                 $order_by = 'transaction_time DESC';
             return $this->ci->logger_model->get_transaction($where, $order_by, $limit);
@@ -150,11 +167,12 @@ class Logger {
      * @return details of user agent
      *
      */
-    function get_user_agent() {
-        $u_agent = $_SERVER['HTTP_USER_AGENT'];
+    function get_user_agent($user_agent) {
+        $u_agent = $user_agent;
         $bname = 'Unknown';
         $platform = 'Unknown';
         $version = "";
+        $ub = "";
         //First get the platform?
         if (preg_match('/linux/i', $u_agent)) {
             $platform = 'linux';

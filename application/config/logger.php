@@ -23,15 +23,18 @@ CREATE TABLE `transaction_logs` (
   `action` varchar(250) NOT NULL,
   `transaction_data` text NOT NULL,
   `user_details` text NOT NULL,
+  `accessing_medium` enum('desktop','mobile','tablet') DEFAULT NULL,
   `ip_address` varchar(250) NOT NULL,
   `user_agent_details` varchar(500) NOT NULL,
   `user_agent_name` varchar(250) NOT NULL,
   `user_agent_version` varchar(250) NOT NULL,
   `platform` varchar(250) NOT NULL,
   `is_bot` tinyint(1) NOT NULL DEFAULT '0' COMMENT '1=Yes, 0=No',
-  `transaction_time` datetime DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  `transaction_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `transaction_time` (`transaction_time`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1;
 
  *
  *
