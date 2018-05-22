@@ -202,6 +202,12 @@ class Logger {
             } elseif (preg_match('/Netscape/i', $u_agent)) {
                 $bname = 'Netscape';
                 $ub = "Netscape";
+            } elseif (preg_match('/Android/i', $u_agent)) {
+                $bname = "Android";
+                $ub = "Android";
+            } elseif (preg_match('/iPhone/i', $u_agent)) {
+                $bname = "iPhone";
+                $ub = "iPhone";
             }
             // finally get the correct version number
             $known = array('Version', $ub, 'other');
@@ -252,9 +258,12 @@ class Logger {
             "Baiduspider", "Feedfetcher-Google", "TechnoratiSnoop", "Rankivabot",
             "Mediapartners-Google", "Sogou web spider", "WebAlta Crawler", "TweetmemeBot",
             "Butterfly", "Twitturls", "Me.dium", "Twiceler", "AhrefsBot", "bingbot", "DotBot", "DeuSu");
-        foreach ($botlist as $bot) {
-            if (strpos($_SERVER['HTTP_USER_AGENT'], $bot) !== false) {
-                return true;
+        $browser = (isset($_SERVER['HTTP_USER_AGENT']) && !empty($_SERVER['HTTP_USER_AGENT'])) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        if ($browser != '') {
+            foreach ($botlist as $bot) {
+                if (strpos($browser, $bot) !== false) {
+                    return true;
+                }
             }
         }
     }
