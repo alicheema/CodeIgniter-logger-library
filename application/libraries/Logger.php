@@ -189,7 +189,7 @@ class Logger {
                 $ub = "MSIE";
             } elseif (preg_match('/Edge/i', $u_agent)) {
                 $bname = 'Internet Explorer';
-                $ub = "MSIE";
+                $ub = "Edge";
             } elseif (preg_match('/Firefox/i', $u_agent)) {
                 $bname = 'Mozilla Firefox';
                 $ub = "Firefox";
