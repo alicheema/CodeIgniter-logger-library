@@ -187,6 +187,9 @@ class Logger {
             if (preg_match('/MSIE/i', $u_agent) && !preg_match('/Opera/i', $u_agent)) {
                 $bname = 'Internet Explorer';
                 $ub = "MSIE";
+            } elseif (preg_match('/Edge/i', $u_agent)) {
+                $bname = 'Internet Explorer';
+                $ub = "MSIE";
             } elseif (preg_match('/Firefox/i', $u_agent)) {
                 $bname = 'Mozilla Firefox';
                 $ub = "Firefox";
